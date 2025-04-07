@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="dashboard.js"></script>
+</head>
+<body>
+
+<h1>Welcome, <span id="username"></span>!</h1>
+<p>Your role: <span id="role"></span></p>
+<button onclick="logout()">Logout</button>
+
+<div class="section">
+    <h2>Available Tournaments</h2>
+    <div id="tournamentList"></div>
+</div>
+
+<div class="section" id="playerMatchesSection" style="display: none;">
+    <h2>My Matches</h2>
+    <div id="playerMatchList"></div>
+</div>
+
+<div class="section" id="joinedTournamentsSection" style="display: none;">
+    <h2>Your Tournaments</h2>
+    <div id="joinedTournamentList"></div>
+</div>
+
+<div class="section" id="refereeMatchesSection" style="display: none;">
+    <h2>Matches to Referee</h2>
+    <div id="refereeMatchList"></div>
+</div>
+
+<div class="section" id="refereeCompletedMatchSection">
+    <h2>Completed Matches</h2>
+    <div id="refereeCompletedMatchList"></div>
+</div>
+
+<div class="section" id="accountUpdateSection">
+    <h2>Update Account Information</h2>
+    <input type="text" id="updateUsername" placeholder="New username"><br>
+    <input type="email" id="updateEmail" placeholder="New email"><br>
+    <input type="password" id="updatePassword" placeholder="New password"><br>
+    <button onclick="updateAccount()">Update Account</button>
+</div>
+
+<div class="section" id="adminSection" style="display: none;">
+    <h2>Admin Panel</h2>
+
+    <h3>Create Tournament</h3>
+    <input type="text" id="newTournamentName" placeholder="Tournament Name">
+    <input type="text" id="newTournamentLocation" placeholder="Location">
+    <input type="date" id="newTournamentDate">
+    <button onclick="createTournament()">Create</button>
+
+    <h3>Export Tournament Matches</h3>
+    <input type="number" id="exportTournamentId" placeholder="Tournament ID">
+    <button onclick="exportMatchesCSV()">Export CSV</button>
+    <button onclick="exportMatchesTXT()">Export TXT</button>
+
+    <h3>Export Tournament Players</h3>
+    <input type="number" id="exportPlayerTournamentId" placeholder="Tournament ID">
+    <button onclick="exportPlayersCSV()">Export CSV</button>
+    <button onclick="exportPlayersTXT()">Export Players TXT</button>
+
+    <h3>All Users</h3>
+    <button onclick="fetchAllUsers()">View All Users</button>
+    <div id="userList"></div>
+
+    <div>
+        <h3>Update User</h3>
+        <input type="number" id="updateUserId" placeholder="User ID" />
+        <input type="text" id="adminUpdateUsername" placeholder="New Username" />
+        <input type="text" id="adminUpdateEmail" placeholder="New Email" />
+        <input type="text" id="adminUpdateRole" placeholder="New Role (PLAYER, REFEREE, ADMIN)" />
+        <input type="password" id="adminUpdatePassword" placeholder="New Password" />
+        <button onclick="updateUser()">Update User</button>
+    </div>
+
+
+    <div style="margin-top: 1em;">
+        <h3>Delete User</h3>
+        <input type="number" id="deleteUserId" placeholder="User ID" />
+        <button onclick="deleteUser()">Delete User</button>
+    </div>
+</div>
+
+
+</body>
+</html>

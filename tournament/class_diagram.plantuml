@@ -1,0 +1,246 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AuthController {
+  - userService: UserService
+  + register(RegisterDTO): ResponseEntity<String>
+  + login(LoginDTO): ResponseEntity<User>
+}
+class GlobalExceptionHandler {
+  + handleRuntimeException(RuntimeException): ResponseEntity<?>
+}
+class LoginDTO {
+  - password: String
+  - email: String
+  + getEmail(): String
+  + getPassword(): String
+  + setEmail(String): void
+  + setPassword(String): void
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+}
+class Match {
+  - tournament: Tournament
+  - player2: User
+  - id: Long
+  - completed: boolean
+  - referee: User
+  - score: String
+  - player1: User
+  + getPlayer2(): User
+  + setPlayer2(User): void
+  # canEqual(Object): boolean
+  + setScore(String): void
+  + hashCode(): int
+  + getId(): Long
+  + getTournament(): Tournament
+  + setPlayer1(User): void
+  + equals(Object): boolean
+  + getPlayer1(): User
+  + setReferee(User): void
+  + builder(): MatchBuilder
+  + setCompleted(boolean): void
+  + getReferee(): User
+  + setTournament(Tournament): void
+  + getScore(): String
+  + isCompleted(): boolean
+  + setId(Long): void
+  + toString(): String
+}
+class MatchController {
+  - service: MatchService
+  + byPlayer(Long): ResponseEntity<List<Match>>
+  + getCompletedByReferee(Long): ResponseEntity<List<Match>>
+  + byReferee(Long): ResponseEntity<List<Match>>
+  + getAll(): ResponseEntity<List<Match>>
+  + byTournament(Long): ResponseEntity<List<Match>>
+  + create(Match): ResponseEntity<Match>
+  + updateScore(Long, MatchScoreUpdateDTO): ResponseEntity<?>
+  + getIncompleteByReferee(Long): ResponseEntity<List<Match>>
+}
+interface MatchRepository << interface >> {
+  + findByRefereeIdAndCompletedFalse(Long): List<Match>
+  + findByPlayer1IdOrPlayer2Id(Long, Long): List<Match>
+  + findByRefereeIdAndCompleted(Long, boolean): List<Match>
+  + findByTournamentId(Long): List<Match>
+  + findByRefereeId(Long): List<Match>
+}
+class MatchScoreUpdateDTO {
+  - refereeId: Long
+  - score: String
+  - completed: boolean
+  + getRefereeId(): Long
+  + getScore(): String
+  + isCompleted(): boolean
+  + setRefereeId(Long): void
+  + setScore(String): void
+  + setCompleted(boolean): void
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+}
+class MatchService {
+  - repo: MatchRepository
+  + getCompletedMatchesForReferee(Long): List<Match>
+  + getByTournament(Long): List<Match>
+  + getMatchesForPlayer(Long): List<Match>
+  + updateScore(Long, Long, String): Match
+  + getByPlayer(Long): List<Match>
+  + getAllMatches(): List<Match>
+  + updateScore(Long, MatchScoreUpdateDTO): Match
+  + createMatch(Match): Match
+  + getIncompleteMatchesForReferee(Long): List<Match>
+  + getByReferee(Long): List<Match>
+}
+class RegisterDTO {
+  - role: String
+  - username: String
+  - email: String
+  - password: String
+  + getPassword(): String
+  + getUsername(): String
+  + getEmail(): String
+  + getRole(): String
+  + setUsername(String): void
+  + setEmail(String): void
+  + setPassword(String): void
+  + toString(): String
+  + setRole(String): void
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+}
+enum Role << enumeration >> {
+  + PLAYER: 
+  + ADMIN: 
+  + REFEREE: 
+  + values(): Role[]
+  + valueOf(String): Role
+}
+class ScoreUpdateDTO {
+  - score: String
+  + getScore(): String
+  + setScore(String): void
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+}
+class SecurityConfig {
+  + filterChain(HttpSecurity): SecurityFilterChain
+  + passwordEncoder(): BCryptPasswordEncoder
+}
+class Tournament {
+  - date: LocalDate
+  - name: String
+  - players: List<User>
+  - id: Long
+  - location: String
+  + getName(): String
+  + getId(): Long
+  + getLocation(): String
+  + builder(): TournamentBuilder
+  + getDate(): LocalDate
+  + getPlayers(): List<User>
+  + hashCode(): int
+  + setId(Long): void
+  + toString(): String
+  + equals(Object): boolean
+  + setDate(LocalDate): void
+  + setName(String): void
+  + setPlayers(List<User>): void
+  # canEqual(Object): boolean
+  + setLocation(String): void
+}
+class TournamentApplication {
+  + main(String[]): void
+}
+class TournamentController {
+  - userRepository: UserRepository
+  - service: TournamentService
+  - matchService: MatchService
+  + exportPlayers(Long): ResponseEntity<?>
+  + joinTournament(Long, Long): ResponseEntity<?>
+  + exportMatchesTXT(Long): ResponseEntity<?>
+  + createTournament(Tournament): ResponseEntity<Tournament>
+  + exportMatchesCSV(Long): ResponseEntity<?>
+  + getPlayers(Long): ResponseEntity<?>
+  + exportPlayersTXT(Long): ResponseEntity<?>
+  + getAllTournaments(): ResponseEntity<List<Tournament>>
+}
+interface TournamentRepository << interface >>
+class TournamentService {
+  - userRepository: UserRepository
+  - repository: TournamentRepository
+  + createTournament(Tournament): Tournament
+  + getAllTournaments(): List<Tournament>
+  + registerPlayer(Long, Long): String
+  + getPlayersInTournament(Long): List<User>
+  + getTournamentById(Long): Tournament
+}
+class User {
+  - role: Role
+  - email: String
+  - id: Long
+  - password: String
+  - username: String
+  - tournaments: List<Tournament>
+  + getRole(): Role
+  + hashCode(): int
+  + setEmail(String): void
+  + toString(): String
+  + getId(): Long
+  + getUsername(): String
+  + equals(Object): boolean
+  + setRole(Role): void
+  + getEmail(): String
+  + builder(): UserBuilder
+  # canEqual(Object): boolean
+  + getPassword(): String
+  + setPassword(String): void
+  + getTournaments(): List<Tournament>
+  + setTournaments(List<Tournament>): void
+  + setId(Long): void
+  + setUsername(String): void
+}
+class UserController {
+  - userRepository: UserRepository
+  - passwordEncoder: BCryptPasswordEncoder
+  + deleteUser(Long): ResponseEntity<?>
+  + getAllUsers(): ResponseEntity<List<User>>
+  + updateUser(Long, User): ResponseEntity<?>
+  + getUserTournaments(Long): ResponseEntity<List<Tournament>>
+}
+interface UserRepository << interface >> {
+  + existsByEmail(String): boolean
+  + findByEmail(String): Optional<User>
+}
+class UserService {
+  - encoder: BCryptPasswordEncoder
+  - repo: UserRepository
+  + register(RegisterDTO): void
+  + login(LoginDTO): Optional<User>
+}
+
+AuthController         "1" *-[#595959,plain]-> "userService\n1" UserService            
+Match                  "1" *-[#595959,plain]-> "tournament\n1" Tournament             
+Match                  "1" *-[#595959,plain]-> "player1\n1" User                   
+MatchController        "1" *-[#595959,plain]-> "service\n1" MatchService           
+MatchService           "1" *-[#595959,plain]-> "repo\n1" MatchRepository        
+Tournament             "1" *-[#595959,plain]-> "players\n*" User                   
+TournamentController   "1" *-[#595959,plain]-> "matchService\n1" MatchService           
+TournamentController   "1" *-[#595959,plain]-> "service\n1" TournamentService      
+TournamentController   "1" *-[#595959,plain]-> "userRepository\n1" UserRepository         
+TournamentService      "1" *-[#595959,plain]-> "repository\n1" TournamentRepository   
+TournamentService      "1" *-[#595959,plain]-> "userRepository\n1" UserRepository         
+User                   "1" *-[#595959,plain]-> "role\n1" Role                   
+User                   "1" *-[#595959,plain]-> "tournaments\n*" Tournament             
+UserController         "1" *-[#595959,plain]-> "userRepository\n1" UserRepository         
+UserService            "1" *-[#595959,plain]-> "repo\n1" UserRepository         
+@enduml
