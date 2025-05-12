@@ -1,8 +1,10 @@
 package com.example.tournament.controller;
 
+import com.example.tournament.dto.PlayerFilterDTO;
 import com.example.tournament.entity.User;
 import com.example.tournament.entity.Tournament;
 import com.example.tournament.repository.UserRepository;
+import com.example.tournament.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -58,5 +63,9 @@ public class UserController {
         return ResponseEntity.ok(user.getTournaments());
     }
 
+    @PostMapping("/search")
+    public ResponseEntity<List<User>> filter(@RequestBody PlayerFilterDTO dto) {
+        return ResponseEntity.ok(userService.filterPlayers(dto));
+    }
 
 }

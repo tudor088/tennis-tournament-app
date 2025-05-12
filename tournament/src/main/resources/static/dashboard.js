@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchPendingRequests();
     }
 
+    if (role === "REFEREE" || role === "ADMIN") {
+        document.getElementById("playerSearchSection").style.display = "block";
+    }
+
     document.getElementById("username").textContent = username;
     document.getElementById("role").textContent = role;
 
@@ -405,5 +409,41 @@ async function decideRequest(reqId, approve) {
         const msg = await res.text();
         alert("Error: " + msg);
     }
+}
+
+async function searchPlayers() {
+    const body = {
+        keyword:        document.getElementById("filterKeyword").value.trim() || null,
+        tournamentId:   parseInt(document.getElementById("filterTournamentId").value) || null,
+        hasIncompleteMatch: (function(){
+            const v = document.getElementById("filterIncomplete").value;
+            return v === "" ? null : v === "true";
+        })()
+    };
+
+    const res = await fetch("/users/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    const resultsDiv = document.getElementById("playerSearchResults");
+    if (!res.ok) {
+        resultsDiv.textContent = "Search failed.";
+        return;
+    }
+
+    const players = await res.json();
+    if (!players.length) {
+        resultsDiv.textContent = "No players match.";
+        return;
+    }
+
+    resultsDiv.innerHTML = "";
+    players.forEach(p => {
+        const d = document.createElement("div");
+        d.textContent = `ID ${p.id} • ${p.username} (${p.email})`;
+        resultsDiv.appendChild(d);
+    });
 }
 

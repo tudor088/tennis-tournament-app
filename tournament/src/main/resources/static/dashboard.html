@@ -88,8 +88,26 @@
         <input type="number" id="deleteUserId" placeholder="User ID" />
         <button onclick="deleteUser()">Delete User</button>
     </div>
+
+
+
 </div>
 
+<div class="section" id="playerSearchSection" style="display:none;">
+    <h2>Find Players</h2>
+    <input type="text" id="filterKeyword" placeholder="Name or e-mail (optional)">
+    <input type="number" id="filterTournamentId" placeholder="Tournament ID (optional)">
+    <label>
+        With unfinished match?
+        <select id="filterIncomplete">
+            <option value="">Either</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+    </label>
+    <button onclick="searchPlayers()">Search</button>
+    <div id="playerSearchResults" style="margin-top:.5em;"></div>
+</div>
 
 </body>
 </html>
