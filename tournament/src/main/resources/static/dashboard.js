@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (role === "ADMIN") {
         document.getElementById("adminSection").style.display = "block";
+        fetchPendingRequests();
     }
 
     document.getElementById("username").textContent = username;
@@ -51,16 +52,18 @@ async function fetchTournaments(userId) {
 }
 
 async function joinTournament(tournamentId, userId) {
-    const res = await fetch(`/tournaments/${tournamentId}/join/${userId}`, {
+    const res = await fetch(`/registration-requests/tournament/${tournamentId}/player/${userId}`, {
         method: "POST"
     });
 
     if (res.ok) {
-        alert("✅ Joined tournament!");
+        alert("✅ Request submitted – waiting for admin approval.");
     } else {
-        alert("❌ Failed to join (maybe already joined?)");
+        const msg = await res.text();
+        alert("❌ " + msg);
     }
 }
+
 
 function logout() {
     localStorage.clear();
@@ -353,4 +356,54 @@ async function updateAccount() {
     }
 }
 
+/* ---------- Pending registration handling (ADMIN) ---------- */
+
+async function fetchPendingRequests() {
+    const listDiv = document.getElementById("pendingRequestList");
+    listDiv.innerHTML = "Loading…";
+
+    const res = await fetch("/registration-requests");
+    if (!res.ok) {
+        listDiv.textContent = "Failed to load.";
+        return;
+    }
+
+    const requests = await res.json();
+    if (!requests.length) {
+        listDiv.textContent = "No pending requests 🎉";
+        return;
+    }
+
+    // Build list
+    listDiv.innerHTML = "";
+    requests.forEach(r => {
+        const div = document.createElement("div");
+        div.style.border = "1px solid #ccc";
+        div.style.padding = "6px";
+        div.style.marginBottom = "6px";
+
+        div.innerHTML = `
+          <strong>Req #${r.id}</strong> — 
+          Player: ${r.player.username} (ID ${r.player.id}) → 
+          Tournament: ${r.tournament.name} (ID ${r.tournament.id})
+          <br>
+          <button onclick="decideRequest(${r.id}, true)">Approve</button>
+          <button onclick="decideRequest(${r.id}, false)">Deny</button>
+        `;
+        listDiv.appendChild(div);
+    });
+}
+
+async function decideRequest(reqId, approve) {
+    const url = `/registration-requests/${reqId}/${approve ? "approve" : "deny"}`;
+    const res = await fetch(url, { method: "PATCH" });
+
+    if (res.ok) {
+        alert(approve ? "✅ Approved!" : "❌ Denied.");
+        fetchPendingRequests();           // refresh list
+    } else {
+        const msg = await res.text();
+        alert("Error: " + msg);
+    }
+}
 

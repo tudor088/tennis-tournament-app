@@ -41,16 +41,16 @@ public class TournamentController {
         return ResponseEntity.ok(service.getAllTournaments());
     }
 
-    @PostMapping("/{tournamentId}/join/{userId}")
-    public ResponseEntity<?> joinTournament(
-            @PathVariable Long tournamentId,
-            @PathVariable Long userId) {
-        try {
-            return ResponseEntity.ok(service.registerPlayer(tournamentId, userId));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @PostMapping("/{tournamentId}/join/{userId}")
+//    public ResponseEntity<?> joinTournament(
+//            @PathVariable Long tournamentId,
+//            @PathVariable Long userId) {
+//        try {
+//            return ResponseEntity.ok(service.registerPlayer(tournamentId, userId));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
     @GetMapping("/{id}/players")
     public ResponseEntity<?> getPlayers(@PathVariable Long id) {
